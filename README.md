@@ -35,75 +35,75 @@ Installation
 ### Downloading HAL
 
 From the parent directory of where you want HAL installed:
-
+```
 	 git clone https://github.com/ComparativeGenomicsToolkit/hal.git
-
+```
 ### Installing Dependencies
 
 #### HDF5 1.10.1 with C++ API enabled
 
 * Using apt (Ubuntu 18.04)
-
+```
     sudo apt install libhdf5-dev
-
+```
 * Using [MacPorts](http://www.macports.org/):
-
+```
     sudo port install hdf5 @1.10.1 +cxx
-
+```
 * From [Source](http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/):
 
-     `wget http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.gz`
-	  `tar xzf  hdf5-1.10.1.tar.gz`
-     `cd hdf5-1.10.1`
-	  `./configure --enable-cxx`
-	  `make && make install`
+```
+wget http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.gz
+tar xzf  hdf5-1.10.1.tar.gz
+cd hdf5-1.10.1
+./configure --enable-cxx
+make && make install
+```
 
 * Local install from source into DIR (do not need root password)
+```
+mkdir DIR/hdf5
+wget http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.gz
+tar xzf  hdf5-1.10.1.tar.gz
+cd hdf5-1.10.1
+./configure --enable-cxx --prefix DIR/hdf5
+make && make install
+```
+Before building HAL, update the following environment variables:
+```
+export PATH=DIR/hdf5/bin:${PATH}
+export h5prefix=-prefix=DIR/hdf5
+```
+or set these in `include.local.mk`.
 
-     `mkdir DIR/hdf5`
-     `wget http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.gz`
-	  `tar xzf  hdf5-1.10.1.tar.gz`
-     `cd hdf5-1.10.1`
-     `./configure --enable-cxx --prefix DIR/hdf5`
-     `make && make install`
-
-     Before building HAL, update the following environment variables:
-
-     `export PATH=DIR/hdf5/bin:${PATH}`
-     `export h5prefix=-prefix=DIR/hdf5`
-
-     or set these in include.local.mk.
-
-    If you are using older version of HDF5, such as installed on Centos,
-    you may need to set
+If you are using older version of HDF5, such as installed on Centos, you may need to set
 
     `export CXX_ABI_DEF=-D_GLIBCXX_USE_CXX11_ABI=1`
 
-    If you get undefined functions base on string type with errors about
-    `std::__cxx11::basic_string` vs `std::basic_string`.
+If you get undefined functions base on string type with errors about `std::__cxx11::basic_string` vs `std::basic_string`.
 
 #### sonLib
 
 From the same parent directory where you downloaded HAL:
-
+```
 	  git clone https://github.com/ComparativeGenomicsToolkit/sonLib.git
 	  pushd sonLib && make && popd
-
+```
 If sonLib and HAL are not sister directories, set the sonLibRootDir `make` variable to reflect the absolute pathname of the directory where you installed sonLib:
-
+```
     sonLibRootDir=/path/to/sonLib
-
+```
 either in an include.local.mk file top level hal/ directory, or as a `make` command argument, e.g.:
-
+```
     pushd sonLib && make sonLibRootDir=/path/to/sonLib && popd
-
+```
 #### Optional support of reading HAL files over HTTP via UCSC's URL Data Cache (UDC)
 
 Define ENABLE_UDC before making, and specify the path of the Kent source tree using KENTSRC.  When built with this enabled, all HAL files opened read-only will be accessed using UDC which supports both local files and URLs.
-
+```
 	  export  ENABLE_UDC=1
 	  export  KENTSRC=<path to top level of Kent source tree>
-
+```
 Those without the UCSC genome browser already installed locally will probably find it simpler to first mount URLs with [HTTPFS](http://httpfs.sourceforge.net/) before opening with HAL.
 
 #### Optional support of PhyloP evolutionary constraint annotation
@@ -113,43 +113,45 @@ PhyloP is part of the [Phast Package](http://compgen.bscb.cornell.edu/phast/), a
 From the same parent directory where you downloaded HAL:
 
 * First install CLAPACK (Linux only)
-
-    `wget http://www.netlib.org/clapack/clapack.tgz`
-    `tar -xvzf clapack.tgz`
-    `mv CLAPACK-3.2.1 clapack`
-    `cd clapack`
-    `cp make.inc.example make.inc && make f2clib && make blaslib && make lib`
-    `export CLAPACKPATH=$(pwd)` `
-    `cd ..`
-
+```
+wget http://www.netlib.org/clapack/clapack.tgz
+tar -xvzf clapack.tgz
+mv CLAPACK-3.2.1 clapack
+cd clapack
+cp make.inc.example make.inc && make f2clib && make blaslib && make lib
+export CLAPACKPATH=$(pwd)
+cd ..
+```
 *  Install Phast (Mac or Linux)
-
-     `git clone https://github.com/CshlSiepelLab/phast.git`
-     `cd phast`
-     `git checkout 85f7ed179dd097a86ba4added22d571785cc3e1d`
-     `cd src && make`
-     `cd ../..`
+```
+git clone https://github.com/CshlSiepelLab/phast.git
+cd phast
+git checkout 85f7ed179dd097a86ba4added22d571785cc3e1d
+cd src && make
+cd ../..
+```
 
 * Before building HAL
-
-     `export ENABLE_PHYLOP=1`
+```
+export ENABLE_PHYLOP=1
+```
 
 Special thanks to Melissa Jane Hubiz and Adam Siepel from Cornell University for their work on extending their tools to work with HAL.
 
 ### Building HAL
 
 From the hal/ directory:
-
+```
 	  make
-
+```
 Before using HAL, add it to your path:
-
+```
 	  export PATH=<path to hal>/bin:${PATH}
-
+```
 The parent directory of hal/ should be in your PYTHONPATH in order to use any of the Python functionality.  This includes running `make test`
-	
+```	
 	  export PYTHONPATH=<parent of hal>:${PYTHONPATH}
-
+```
 HAL Tools
 -----
 
@@ -182,23 +184,24 @@ All HAL tools compiled with HDF5 support expose some caching parameters.  Tools 
 [MAF](http://genome.ucsc.edu/FAQ/FAQformat.html#format5) is a text format used at UCSC to store genome alignments.  MAFs are typically stored with respect to a reference genome.  MAFs can be imported into HAL as subtrees using the `maf2hal` command.
 
 To import primates.maf as a star tree where the first alignment row specifies the root, and all others the leaves:
-
+```
      maf2hal primates.maf primates.hal
-
+```
 To import primates.maf using "chimp" has the root
-
+```
      maf2hal primates.maf primates.hal --refGenome chimp
-
+```
 The more the underlying tree looks like a star tree, the less efficient HAL is as all genomes will be fragmented with respect to each other.  If ancestral (or multiple reference) sequences are available, or if it is acceptable to use a non-reference species as a reference proxy, then trees of arbitrary typologies can be constructed using the `--append` option.
-
-     maf2hal mammals.maf mammals.hal --refGenome mouse --targetGenomes human,rat,chimp,dog
-	  maf2hal mammals.maf mammals.hal --append --refGenome human --targetGenomes chimp,gorilla,orang
-	  maf2hal mammals.maf mammals.hal --append --refGenome dog --targetGenomes cow,horse
+```
+	maf2hal mammals.maf mammals.hal --refGenome mouse --targetGenomes human,rat,chimp,dog
+	maf2hal mammals.maf mammals.hal --append --refGenome human --targetGenomes chimp,gorilla,orang
+	maf2hal mammals.maf mammals.hal --append --refGenome dog --targetGenomes cow,horse
+```
 
 This will create a tree that looks like
-
+```
 	 ((chimp, gorilla,orang)human, rat,(cow,horse)dog)mouse;
-
+```
 #### Cactus Import
 
 HAL is most beneficial when consensus reference or ancestral sequences are available at the internal nodes of the tree.  This is the type of information generated by progressive alignment pipelines.  Cactus is our implementation of such a pipeline.
@@ -210,27 +213,27 @@ HAL is most beneficial when consensus reference or ancestral sequences are avail
 MAF files can be generated from HAL alignments or sub-alignments.  The reference genome and alignment scope (subsequence of the reference and/or phylogenetic distance) are chosen through command-line options.
 
 Export the HAL alignment as a MAF referenced at the root
-
+```
 		 hal2maf mammals.hal mammals.maf
-
+```
 Export a MAF with referenced at sequence *chr6* in the human genome
-
+```
 		 hal2maf mammals.hal mammals.maf --refGenome human --refSequence chr6
-
+```
 Export a MAF consisting of the alignment of human with respect to *chr2* in chimp
-
+```
 		 hal2maf mammals.hal mammals.maf --refGenome chimp --refSequence chr2 --targetGenomes human
-
+```
 Export a MAF consisting of the alignment of all apes referenced on gorilla
-
+```
 		 hal2maf mammals.hal mammals.maf --rootGenome ape_ancestor --refGenome gorilla
-
+```
 By default, no gaps are written to the reference sequence.  The `--maxRefGap` can be specified to allow gaps up to a certain size in the reference.  This is achieved by recursively following indels in the graph that could correspond to reference gaps.
 
 Mafs can be generated in parallel using the hal2mafMP.py wrapper
-
+```
 		 hal2mafMP.py mammals.hal mammals.maf --numProc 10
-
+```
 #### FASTA Export
 
 DNA sequences (without any alignment information) can be extracted from HAL files in FASTA format using `hal2fasta`.
@@ -258,9 +261,9 @@ vg convert -g mammals.gfa -p > mammals.pg
 ### Displaying in the UCSC Genome Browser using Assembly Hubs
 
 HAL alignments can be displayed as Assembly Hubs in the Genome Browser.  To create an assembly hub, use the [Comparative Annotation Toolkit](https://github.com/ComparativeGenomicsToolkit/Comparative-Annotation-Toolkit) or run
-
+```
 	hal2assemblyHub.py mammals.hal outputDirectory
-
+```
 Larger alignments require the use of the `--lod` option to generate precomputed levels of detail.
 
 Note that this process is presently dependent on having UCSC's faToTwoBit installed.  The `outputDirectory` must be accessible as a URL in order to load the hub. More details are available at [hal2assemblyHub Manual](assemblyHub#comparative-assembly-hub-manual).
@@ -270,39 +273,39 @@ Note that this process is presently dependent on having UCSC's faToTwoBit instal
 #### halValidate
 
 It is a good idea to check if a hal file is valid after creating it.
-
+```
 	halValidate mammals.hal
-
+```
 #### halStats
 
 Some global information from a HAL file can be quickly obtained using `halStats`.  It will return the number of genomes, their phylogenetic tree, and the size of each array in each genome.
-
+```
 	  halStats mammals.hal
-
+```
 The `--tree`, `--sequences`, and `--genomes` options can be used to print out only specific information to simplify iterating over the alignment in shell or Python scripts.
 
 #### halSummarizeMtuations
 
 A count of each type of mutation (Insertions, Deletions, Inversions, Duplications, Transpositions, Gap Insertions, Gap Deletions) in each branch of the alignment can be printed out in a table.
-
+```
      halSummarizeMutations mammals.hal
-
+```
 Subtrees can be specified using the `--targetGenomes` or `--rootGenome` option.  The `--maxGap` option is used to distinguish from small, 'gap' indels and larger indels.  This distinction is somewhat arbitrary (but conventional).  HAL allows gap indels to be nested within larger rearrangements:  ex. an inversion with a gap deletion inside would be counted as a single inversion, but an inversion containing a non-gap event would be identified as multiple independent inversions.
-
+```
      halSummarizeMutations mammals.hal --maxNFraction 0
-
+```
 will prevent rearrangements with missing data as being identified as such.  More generally, if an insertion of length 50 contains c N-characters, it will be labeled as missing data (rather than an insertion) if c/N > `maxNFraction`.
 
 #### Levels of Detail
 
 Some applications such as genome browsers my need to quickly access high-level information about the alignment without scanning every segment.  We provide tools to resample a HAL graph to compute a coarser-grained levels of detail to speed up subsequent analysis at different scales.  To generate an output hal file based on a sampling of every `100` bases:
-
+```
      halLodExtract mammals.hal mammals_100.hal 100
-
+```
 To generate a series of levels of details, such that each level of detail is 5x coarser than the previous, and that there are at most (approx.) 100 segments at the lowest level, use the following script:
-
+```
      halLodInterpolate.py mammals.hal lod_summary.txt --scale 5 --maxBlock 100
-
+```
 Note that both tools have a `--keepSequences` option to specify whether or not the DNA sequences are stored in the output files.
 
 ### Analysis
@@ -310,13 +313,13 @@ Note that both tools have a `--keepSequences` option to specify whether or not t
 #### Liftover
 
 Annotations in [BED](http://genome.ucsc.edu/FAQ/FAQformat.html#format1), ie tab-delimited files whose first three columns are
-
+```
      SequenceName     StartPosition    LastPosition+1
-
+```
 can be lifted over between genomes using `halLiftover`.  halLiftover does a base-by-base mapping between any two sequences in the alignment (following paralogy relations as well).  The output is written in BED (default) or PSL format.
-
+```
 	 halLiftover mammals.hal human human_annotation.bed dog dog_annotation.bed
-
+```
 will map all annotations in human_annotation.bed, which must refer to sequences in the human genome, to their corresponding locations in dog (if they exist), outputting the resulting annotations in dog_annotation.bed
 
 halLiftover attempts to autodetect the BED version of the input.  This can be overried with the `--inVedVersion` option.   Columns that are not described in the official BED specs can be optionally mapped as-is using the `--keepExtra` option.
@@ -336,21 +339,21 @@ The number of distinct genomes different bases of a set of target genomes align 
 ### SNPs
 
 To compute the point mutations (SNPs) between a given pair of genomes in the HAL graph, `halSnps` can be used:
-
+```
      halSnps mammals.hal human duck --bed human_duck_snps.bed
-
+```
 will produce a BED files listing the SNPs in human coordinates between human and duck.  A count of the number of snps and the total aligned columns are printed to stdout.
 
 ### General mutations along branches
 
 Annotation files, as described above, can be generated from the alignment to provide the locations of substitutions and rearrangements.  Annotations are done on a branch-by-branch basis, but can be mapped back to arbitrary references using `halLiftover` if so desired.  The produced annotation files have the format
-
+```
      SequenceName     StartPosition    LastPosition+1  MutationID  ParentGenome ChildGenome
-
+```
 The ID's refer to the types of mutations described above, and are explained in the header of each generated file.   To generate tables of rearrangement mutations between human and its most recent ancestor in the alignment, run
-
+```
 	 halBranchMutations mammals.hal human --refFile ins.bed --parFile del.bed
-
+```
 Two bed files must be specified because the coordinates of inserted (and by convention inverted and transposed) segments are with respect to bases in the human genome (reference), where as deleted bases are in ancestral coordinates (parent).
 
 Point mutations can optionally be written using the `--snpFile <file>` option.  The '--maxGap' and '--maxNFraction' options can specify the gap indel threshold and missing data threshold, respectively, as described above in the *halSummarizeMtuations* section.
@@ -370,10 +373,10 @@ PhyloP is part of the [Phast Package](http://compgen.bscb.cornell.edu/phast/), a
      See `halPhyloPMP.py`
 
 * Examples:
-
-	 `halPhyloPTrain.py mammals.hal human neutralRegions.bed neutralModel.mod --numProc 12`
-	 `halTreePhyloP.py mammals.hal neutralModel.mod outdir --bigWig --numProc 12`
-
+```
+	halPhyloPTrain.py mammals.hal human neutralRegions.bed neutralModel.mod --numProc 12
+	 halTreePhyloP.py mammals.hal neutralModel.mod outdir --bigWig --numProc 12
+```
 Special thanks to Melissa Jane Hubiz and Adam Siepel from Cornell University for their work on extending their tools to work with HAL.
 
 
